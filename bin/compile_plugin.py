@@ -5,8 +5,11 @@ import os
 import platform
 import subprocess
 import sys
+import tempfile
+import shutil
 from pathlib import Path
-from typing import Optional, List, Tuple  # noqa: F401 (Python 2 compatibility)
+from contextlib import contextmanager
+from typing import Optional, List, Tuple, Iterator  # noqa: F401 (Python 2 compatibility)
 
 try:
     input = raw_input  # Python 2
@@ -136,43 +139,60 @@ def find_plugin(path: Optional[str] = None) -> Path:
     
     return plugin_path.resolve()
 
-def setup_output_path(plugin_path: Path, ue_version: str, base_path: Optional[str] = None) -> Path:
+@contextmanager
+def temporary_directory() -> Iterator[Path]:
+    """Create and manage a temporary directory that auto-cleans.
+    
+    Yields:
+        Path: Path to temporary directory
+        
+    Note:
+        Directory and contents are automatically removed when exiting context
+    """
+    temp_dir = tempfile.mkdtemp(prefix='plugin_build_')
+    try:
+        yield Path(temp_dir)
+    finally:
+        try:
+            shutil.rmtree(temp_dir)
+        except Exception as e:
+            print(f"Warning: Failed to cleanup temporary directory {temp_dir}: {e}", 
+                  file=sys.stderr)
+
+def setup_output_path(plugin_path: Path, ue_version: str, base_path: Optional[str] = None) -> Tuple[Path, bool]:
     """Configure output directory.
     
     Args:
         plugin_path (Path): Path to the .uplugin file
         ue_version (str): Unreal Engine version
         base_path (Optional[str], optional): Base output directory. Defaults to None.
-            If None, uses ./Builds
+            If None, uses a temporary directory
             If specified, uses base_path
     
     Returns:
-        Path: Configured and cleaned output directory path in format:
-              [base_path]/[ue_version]/[plugin_name]/
-        
-    Note:
-        Will attempt to clean existing output directory if it exists
+        Tuple[Path, bool]: (Configured output directory path, is_temporary)
     """
     if base_path:
         output_base = Path(base_path)
+        is_temporary = False
+        output_path = output_base / ue_version / plugin_path.stem
+        
+        if output_path.exists():
+            print(f"Cleaning previous build directory: {output_path}")
+            try:
+                for item in output_path.rglob("*"):
+                    if item.is_file():
+                        item.unlink()
+                    elif item.is_dir():
+                        item.rmdir()
+                output_path.rmdir()
+            except Exception as e:
+                print(f"Warning: Could not clean directory completely: {e}")
     else:
-        output_base = Path.cwd() / ".Builds"
+        is_temporary = True
+        output_path = None  # Will be set in main() using context manager
     
-    output_path = output_base / ue_version / plugin_path.stem
-    
-    if output_path.exists():
-        print(f"Cleaning previous build directory: {output_path}")
-        try:
-            for item in output_path.rglob("*"):
-                if item.is_file():
-                    item.unlink()
-                elif item.is_dir():
-                    item.rmdir()
-            output_path.rmdir()
-        except Exception as e:
-            print(f"Warning: Could not clean directory completely: {e}")
-
-    return output_path
+    return output_path, is_temporary
 
 def build_plugin(ue_version: str, plugin_path: Path, output_path: Path) -> int:
     """Execute the plugin build process.
@@ -212,24 +232,12 @@ def build_plugin(ue_version: str, plugin_path: Path, output_path: Path) -> int:
     return subprocess.call(cmd)
 
 def main():
-    """Main entry point for the plugin compiler.
-    
-    Command line arguments:
-        -v, --version: Unreal Engine version (e.g., 5.1)
-        -p, --plugin: Path to .uplugin file
-        -o, --output: Build output directory, defaults to ./.Builds/
-    
-    The output will be compiled to:
-        [OUTPUT_DIR]/[UE_VERSION]/[PLUGIN_NAME]/
-        
-    Returns:
-        int: Process exit code (0 for success)
-    """
+    """Main entry point for the plugin compiler."""
     parser = argparse.ArgumentParser(description="Unreal Engine Plugin Compiler")
     parser.add_argument("-v", "--version", help="Unreal Engine version (e.g., 5.1)")
     parser.add_argument("-p", "--plugin", help="Path to .uplugin file")
     parser.add_argument("-o", "--output_directory", 
-                       help="Output directory (default: ./.Builds/[UE_VERSION]/[PLUGIN_NAME]/)")
+                       help="Output directory (default: temporary directory)")
     args = parser.parse_args()
 
     # Find UE version
@@ -240,12 +248,22 @@ def main():
     plugin_path = find_plugin(args.plugin)
     
     # Setup output directory
-    output_path = setup_output_path(plugin_path, ue_version, args.output_directory)
-        
+    output_path, is_temporary = setup_output_path(plugin_path, ue_version, args.output_directory)
+    
     try:
-        # Build the plugin
-        result = build_plugin(ue_version, plugin_path, output_path)
-        sys.exit(result)
+        if is_temporary:
+            with temporary_directory() as temp_dir:
+                output_path = temp_dir / ue_version / plugin_path.stem
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                result = build_plugin(ue_version, plugin_path, output_path)
+                print(f"\nTemporary build directory: {output_path}")
+                if result == 0:
+                    print("Build completed successfully")
+                sys.exit(result)
+        else:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            result = build_plugin(ue_version, plugin_path, output_path)
+            sys.exit(result)
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
