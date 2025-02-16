@@ -57,7 +57,7 @@ def get_base_path() -> Path:
         )
     return base_path
 
-def get_engine_path(version: str) -> Path:
+def get_engine_path(version: str, base_path:Optional[str] = None) -> Path:
     """
     Get Unreal Engine installation path.
     
@@ -70,7 +70,7 @@ def get_engine_path(version: str) -> Path:
     Raises:
         PlatformError: If engine path could not be located
     """
-    base_path = get_base_path()
+    base_path = Path(base_path) if base_path else get_base_path()
     engine_path = base_path / f"UE_{version}"
 
     if not engine_path.is_dir():

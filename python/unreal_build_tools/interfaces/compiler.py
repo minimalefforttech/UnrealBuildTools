@@ -1,8 +1,5 @@
-from abc import ABC, abstractmethod, abstractproperty
-from pathlib import Path
-from typing import Optional, List, Dict, Any
-from ..structs import CompilerConfig
-from ..constants import Platform
+from abc import ABC, abstractmethod
+from unreal_build_tools.core.structs import CompilerConfig
 
 class ICompiler(ABC):
     """Interface for compiler implementations defining the build lifecycle."""

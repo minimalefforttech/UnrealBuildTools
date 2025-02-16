@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List
-from ..interfaces.validator import IValidator
-from ..structs import ValidationResult, PluginInfo
-from ..constants import SOURCE_FILE_EXTENSIONS, THIRD_PARTY_MARKER, COMMENT_PREFIXES
+from unreal_build_tools.interfaces.validator import IValidator
+from unreal_build_tools.core.structs import ValidationResult, PluginInfo
+from unreal_build_tools.core.constants import SOURCE_FILE_EXTENSIONS, THIRD_PARTY_MARKER, COMMENT_PREFIXES
 
 class FabPluginCopyrightValidator(IValidator):
     """Validates copyright notices in source files."""

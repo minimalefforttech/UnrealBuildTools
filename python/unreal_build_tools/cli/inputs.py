@@ -5,8 +5,8 @@ The utilities handle cases where inputs are not provided by searching common
 locations and providing interactive prompts where needed. All functions include
 validation to ensure valid inputs are returned or appropriate errors are raised.
 """
-from unreal_build_tools import platform_utils
-from unreal_build_tools.logging import setup_logger
+from unreal_build_tools.core import platform_utils
+from unreal_build_tools.core.logging import setup_logger
 
 from typing import List, Optional
 from pathlib import Path

@@ -3,9 +3,9 @@ from typing import Optional, Dict, Any
 import subprocess
 import logging
 
-from ..interfaces.compiler import ICompiler
-from ..structs import CompilerConfig
-from ..platform_utils import get_uat_script
+from unreal_build_tools.interfaces.compiler import ICompiler
+from unreal_build_tools.core.structs import CompilerConfig
+from unreal_build_tools.core.platform_utils import get_uat_script
 
 logger = logging.getLogger(__file__)
 

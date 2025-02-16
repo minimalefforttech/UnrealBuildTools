@@ -9,7 +9,7 @@ import tempfile
 import shutil
 import sys
 from pathlib import Path
-from unreal_build_tools.logging import setup_logger
+from .logging import setup_logger
 
 logger = setup_logger(__name__)
 

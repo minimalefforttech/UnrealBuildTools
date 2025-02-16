@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List
-from ..interfaces.validator import IValidator
-from ..structs import ValidationResult, PluginInfo
-from ..constants import MAX_PATH_LENGTH
+from unreal_build_tools.interfaces.validator import IValidator
+from unreal_build_tools.core.structs import ValidationResult, PluginInfo
+from unreal_build_tools.core.constants import MAX_PATH_LENGTH
 
 class FabPluginPathValidator(IValidator):
     """Validates path lengths in plugin files."""

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from ..structs import ValidationResult, PluginInfo
+from unreal_build_tools.core.structs import ValidationResult, PluginInfo
 
 class IValidator(ABC):
     """Interface for plugin validation implementations."""

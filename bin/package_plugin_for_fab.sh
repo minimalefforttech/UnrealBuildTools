@@ -16,4 +16,4 @@ else
     PYTHON_CMD=python
 fi
 
-"$PYTHON_CMD" -m unreal_build_tools.cli.package_fab "$@"
+"$PYTHON_CMD" -m unreal_build_tools.cli.package_plugin_for_fab "$@"

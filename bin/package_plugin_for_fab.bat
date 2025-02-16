@@ -22,5 +22,5 @@ if %ERRORLEVEL% EQU 0 (
     )
 )
 
-%PYTHON_CMD% -m unreal_build_tools.cli.package_fab %*
+%PYTHON_CMD% -m unreal_build_tools.cli.package_plugin_for_fab %*
 endlocal

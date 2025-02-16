@@ -4,11 +4,11 @@ import sys
 import traceback
 from pathlib import Path
 
-from unreal_build_tools.logging import setup_logger
-from unreal_build_tools.platform_utils import get_platform, get_engine_path
-from unreal_build_tools.filesystem import find_uplugin, temporary_directory
-from unreal_build_tools.structs import CompilerConfig
-from unreal_build_tools.exceptions import UnrealBuildToolsError
+from unreal_build_tools.core.logging import setup_logger
+from unreal_build_tools.core.platform_utils import get_platform, get_engine_path
+from unreal_build_tools.core.filesystem import find_uplugin, temporary_directory
+from unreal_build_tools.core.structs import CompilerConfig
+from unreal_build_tools.core.exceptions import UnrealBuildToolsError
 from unreal_build_tools.impl.plugin_compiler import PluginCompiler
 from unreal_build_tools.cli.inputs import select_ue_version
 

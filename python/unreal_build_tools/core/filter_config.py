@@ -10,6 +10,10 @@ from pathlib import Path
 from typing import List
 import configparser
 import fnmatch
+import shutil
+import logging
+
+logger = logging.getLogger(__name__)
 
 def parse_filter_config(plugin_root: Path) -> List[str]:
     """Parse FilterPlugin.ini to get files to include.
@@ -47,42 +51,7 @@ def parse_filter_config(plugin_root: Path) -> List[str]:
         pattern = key.strip()
         # Normalize pattern separators and remove leading slash
         pattern = pattern.replace('\\', '/')
-        if pattern.startswith('/'):
-            pattern = pattern[1:]
         if pattern and not pattern.startswith(';'):
-            patterns.append(pattern)
+            patterns.append(pattern.replace("...", "**/*.*"))
     
     return patterns
-
-def should_include_path(path: str, patterns: List[str]) -> bool:
-    """Check if a path matches any of the filter patterns.
-    
-    Args:
-        path (str): Path to check (relative to plugin root)
-        patterns (List[str]): List of patterns to match against
-        
-    Returns:
-        bool: True if path should be included
-        
-    Note:
-        Patterns starting with / are anchored to plugin root
-        The ... wildcard means "this directory and all subdirectories"
-    """
-    # Normalize path separators
-    path = path.replace('\\', '/')
-    if path.startswith('/'):
-        path = path[1:]
-    
-    for pattern in patterns:
-        
-        # Handle ... wildcard
-        if pattern.endswith('/...'):
-            # Check if path starts with the directory part of pattern
-            dir_part = pattern[:-4]  # Remove /...
-            if path == dir_part or path.startswith(dir_part + '/'):
-                return True
-        # Regular glob pattern
-        elif fnmatch.fnmatch(path, pattern):
-            return True
-    
-    return False

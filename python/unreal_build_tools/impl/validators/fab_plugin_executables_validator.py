@@ -1,8 +1,8 @@
 import fnmatch
 from typing import List
-from ..interfaces.validator import IValidator
-from ..structs import ValidationResult, PluginInfo
-from ..constants import EXECUTABLE_PATTERNS
+from unreal_build_tools.interfaces.validator import IValidator
+from unreal_build_tools.core.structs import ValidationResult, PluginInfo
+from unreal_build_tools.core.constants import EXECUTABLE_PATTERNS
 
 class FabPluginNoExecutablesValidator(IValidator):
     """Validates executable files in plugin."""
@@ -16,7 +16,7 @@ class FabPluginNoExecutablesValidator(IValidator):
         errors: List[str] = []
         source_dir = self.plugin_info.source_dir
         
-        for filepath in source_dir.rgloc('*'):
+        for filepath in source_dir.rglob('*'):
             if not filepath.is_file():
                 continue
                 

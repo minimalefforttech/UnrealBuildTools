@@ -1,9 +1,9 @@
 import json
 import re
 from typing import List
-from ..interfaces.validator import IValidator
-from ..structs import ValidationResult, PluginInfo
-from ..constants import FAB_URL_PATTERN
+from unreal_build_tools.interfaces.validator import IValidator
+from unreal_build_tools.core.structs import ValidationResult, PluginInfo
+from unreal_build_tools.core.constants import FAB_URL_PATTERN
 
 class FabPluginUpluginValidator(IValidator):
     """Validates the .uplugin file content."""
