@@ -1,46 +1,48 @@
 # ADR-001: Python Package Structure for Unreal Build Tools
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The current build tools exist as monolithic packages within Unreal Engine. We need to convert these into a maintainable, cross-platform Python package with clear interfaces and validation capabilities.
 
 ## Decision
-We will restructure the tools into a Python package with the following flat structure:
+We will restructure the tools into a Python package with the following structure:
 
 ```
 UnrealBuildTools/
 ├── python/
 │   └── unreal_build_tools/
 │       ├── interfaces/
-│       │   ├── __init__.py
 │       │   ├── validator.py
-│       │   └── builder.py
-│       ├── validators/
-│       │   ├── __init__.py
-│       │   ├── config_validator.py
-│       │   └── dependency_validator.py
+│       │   └── compiler.py
+│       ├── impl/
+│       │   ├── plugin_compiler.py
+│       │   └── validators/
+│       │       └── assorted_validators...
 │       ├── cli/
-│       │   ├── __init__.py
-│       │   ├── package_fab.py
-│       │   └── compile.py
-│       ├── __init__.py
-│       ├── constants.py
-│       ├── structs.py
-│       ├── platform_utils.py
-│       └── logging.py
+│       │   ├── compile_plugin.py
+│       │   ├── inputs.py
+│       │   └── package_plugin_for_fab.py
+│       ├── core/
+│       │   ├── constants.py
+│       │   ├── structs.py
+│       │   ├── platform_utils.py
+│       │   ├── exceptions.py
+│       │   ├── filter_config.py
+│       │   └── logging.py
+│       ├── packaging.py
+│       └── staging.py
 ├── bin/
-│   ├── package_fab_plugin.sh
-│   ├── package_fab_plugin.bat
+│   ├── package_plugin_for_fab.sh
+│   ├── package_plugin_for_fab.bat
 │   ├── compile_plugin.sh
 │   └── compile_plugin.bat
-├── tests/
-└── setup.py
+└── tests/
 ```
 
 ### Key Components:
-1. Flat package structure under unreal_build_tools/
+1. Package structure under unreal_build_tools/
 2. Clear separation of interfaces, validators, and CLI tools
 3. Common utilities and constants at package root level
 4. Platform-agnostic shell scripts in bin/
