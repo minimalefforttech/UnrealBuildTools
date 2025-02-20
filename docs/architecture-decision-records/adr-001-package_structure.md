@@ -1,7 +1,7 @@
 # ADR-001: Python Package Structure for Unreal Build Tools
 
 ## Status
-Accepted
+Completed
 
 ## Context
 The current build tools exist as monolithic packages within Unreal Engine. We need to convert these into a maintainable, cross-platform Python package with clear interfaces and validation capabilities.
