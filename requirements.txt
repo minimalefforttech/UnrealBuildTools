@@ -1,0 +1,14 @@
+# GUI dependencies
+PySide6>=6.6.0  # Qt bindings for Python used in icon_finder
+
+# All other functionality uses standard library modules:
+# - pathlib
+# - json 
+# - argparse
+# - logging 
+# - shutil
+# - tempfile
+# - configparser
+# - enum
+# - dataclasses
+# - abc
