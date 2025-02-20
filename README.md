@@ -1,7 +1,7 @@
 # UnrealBuildTools
 
 A collection of custom deployment and development tools for Unreal Engine plugins.  
-These are made for my personal use but shared in the hope it may be helpfule.
+These are made for my personal use but shared in the hope it may be helpful.
 
 Specifically there are 3 tools here to assist in deploying FAB plugins.
 
